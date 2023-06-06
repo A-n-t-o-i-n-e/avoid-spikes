@@ -1,6 +1,5 @@
 import pyxel
 from random import randint
-from time import sleep
 
 class App:
     def __init__(self):
@@ -41,7 +40,6 @@ class App:
     def update(self):
         if pyxel.btn(pyxel.KEY_R):
             self.reset_game()
-            sleep(3)
             
         self.update_player1()
         self.update_player2()
@@ -177,12 +175,14 @@ class App:
                 self.menu = False
             self.coords = self.generate_coordinates(self.n_pic)
             self.score1 , self.score2  = 0, 0
+            self.reset_player1()
+            self.reset_player2()
         else:
             pass
         pyxel.text(3, 2, str(self.score1), 12)
         pyxel.text(3, 9, str(self.score2), 8)
         pyxel.text(3, 16, str(self.n_pic), 7)
-        pyxel.text(110, 2, str(round(self.timer, 1)), 7)
+        pyxel.text(108, 2, str(round(self.timer, 1)) + "s", 7)
         
         
         if self.win1:
