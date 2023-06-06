@@ -1,5 +1,6 @@
 import pyxel
 from random import randint
+from time import sleep
 
 class App:
     def __init__(self):
@@ -21,8 +22,10 @@ class App:
         self.v = 1
         self.menu = True
         self.mult = False
-        self.frame_count = 0  # Compteur de frames
-        self.timer = 30  # Timer en secondes
+        self.frame_count = 0 
+        self.timer = 30
+        self.win1 = False
+        self.win2 = False
         
         self.coords = self.generate_coordinates(self.n_pic)
         
@@ -38,14 +41,16 @@ class App:
     def update(self):
         if pyxel.btn(pyxel.KEY_R):
             self.reset_game()
+            sleep(3)
             
         self.update_player1()
         self.update_player2()
         
         self.check_collision(self.x, self.y, 1)
         self.check_collision(self.x2, self.y2, 2)
-        
-        self.update_timer()
+        if not self.menu:
+            self.update_timer()
+        self.end()
         
         self.frame_count += 1  # Incrémenter le compteur de frames
         
@@ -126,9 +131,17 @@ class App:
             self.timer = 30
             
             if self.mult:
-                self.n_pic += 10
+                self.n_pic -= 5
             
             self.coords = self.generate_coordinates(self.n_pic)
+    
+    def end(self):
+        if self.score1 >= 11:
+            self.win1 = True
+            return True
+        if self.score2 >= 11:
+            self.win2 = True
+            return True
         
     def draw(self):
         pyxel.cls(10)
@@ -137,13 +150,14 @@ class App:
         for coord in self.coords:
             pyxel.blt(coord[0], coord[1], 0, 0, 0, 3, 3, 5)
         if self.menu:
+            self.timer = 30
             pyxel.rect(10, 10, 108, 108, 11)
-            pyxel.text(43, 15, "DIFFICULTÉ", 0)
+            pyxel.text(43, 15, "DIFFICULTE", 0)
             pyxel.text(43, 30, "1 = FACILE", 0)
             pyxel.text(43, 45, "2 = NORMAL", 0)
             pyxel.text(43, 60, "3 = DIFFICILE", 0)
             pyxel.text(43, 75, "4 = PROGRESSIF", 0)
-            pyxel.text(43, 90, "R = RÉINITIALISER", 0)
+            pyxel.text(43, 90, "R = REINITIALISER", 0)
             pyxel.text(43, 105, "G = MENU", 0)
             if pyxel.btn(pyxel.KEY_1):
                 self.menu = False
@@ -162,12 +176,25 @@ class App:
                 self.n_pic = 0
                 self.menu = False
             self.coords = self.generate_coordinates(self.n_pic)
+            self.score1 , self.score2  = 0, 0
         else:
             pass
         pyxel.text(3, 2, str(self.score1), 12)
         pyxel.text(3, 9, str(self.score2), 8)
         pyxel.text(3, 16, str(self.n_pic), 7)
         pyxel.text(110, 2, str(round(self.timer, 1)), 7)
-            
+        
+        
+        if self.win1:
+            pyxel.cls(12)
+            pyxel.text(40, 32, 'PLAYER 1 WIN !', 0) 
+            pyxel.text(40, 40, str(self.score1), 0)
+            pyxel.text(50, 80, 'PRESS R', 0) 
+        if self.win2:
+            pyxel.cls(8)
+            pyxel.text(40, 32, 'PLAYER 2 WIN !', 0)
+            pyxel.text(40, 32, str(self.score2), 0)
+            pyxel.text(50, 80, 'PRESS R', 0) 
+
 
 App()
